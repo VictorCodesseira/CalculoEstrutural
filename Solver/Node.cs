@@ -14,9 +14,6 @@ namespace Solver
         [JsonIgnore]
         public Link link; // Link that locks some DOFs in place
 
-        [JsonIgnore]
-        public bool hinge = false;
-
         private double x, y, z;
 
         public double[] ForcedDisplacements = { 0, 0, 0, 0, 0, 0 };
@@ -30,9 +27,18 @@ namespace Solver
             }
         }
 
-        public DenseVector NodalDisplacements; // Displacements of the node, in the global cartesian system
-        public DenseVector NodalReactions; // Reactions of the node, in the global cartesian system
+        [JsonIgnore]
+        public DenseVector EndForces;
 
+        public DenseVector NodalDisplacements; // Displacements of the node, in the global cartesian system
+
+        public DenseVector NodalReactions // Reactions of the node, in the global cartesian system
+        {
+            get
+            {
+               return EndForces - this.load.FVector;
+            }
+        }
         public Node(double x, double y, double z, int ID)
         {
             this.ID = ID;
@@ -42,7 +48,7 @@ namespace Solver
             this.load = new Load();
             this.link = new Link();
             this.NodalDisplacements = new DenseVector(6);
-            this.NodalReactions = new DenseVector(6);
+            this.EndForces = new DenseVector(6);
         }
 
         public void addLoad(Load ld)
@@ -58,20 +64,15 @@ namespace Solver
         public void addForcedDisplacement(double dx, double dy, double dz)
         {
             this.ForcedDisplacements[0] = dx;
-            this.ForcedDisplacements[0] = dy;
-            this.ForcedDisplacements[0] = dz;
+            this.ForcedDisplacements[1] = dy;
+            this.ForcedDisplacements[2] = dz;
         }
 
         public void addForcedRotation(double drx, double dry, double drz)
         {
-            this.ForcedDisplacements[0] = drx;
-            this.ForcedDisplacements[0] = dry;
-            this.ForcedDisplacements[0] = drz;
-        }
-
-        public void addHinge()
-        {
-            this.hinge = true;
+            this.ForcedDisplacements[3] = drx;
+            this.ForcedDisplacements[4] = dry;
+            this.ForcedDisplacements[5] = drz;
         }
 
         public double Distance(Node other)

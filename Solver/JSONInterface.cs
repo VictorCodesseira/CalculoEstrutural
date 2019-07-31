@@ -131,8 +131,9 @@ namespace Solver
 
             foreach (dynamic hin in json["Hinges"]) // Add hinges to nodes
             {
+                int beam = hin["Beam"];
                 int node = hin["Node"];
-                nodes[node].addHinge();
+                ((Beam)elements[beam]).addHinge(node);
             }
 
             foreach (dynamic fd in json["Forced Displacements"]) // Add displacements to nodes

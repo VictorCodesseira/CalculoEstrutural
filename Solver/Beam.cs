@@ -6,7 +6,7 @@ namespace Solver
     {
         private DistributedLoad load;
         private double L { get; set; }
-
+        private int hinge; // 0 = none, 1 = start, 2 = end, 3 = both
         public Beam(Node startNode, Node endNode, Material material, Section section, int ID)
             : base(startNode, endNode, material, section, ID)
         {
@@ -19,6 +19,11 @@ namespace Solver
             this.load = ld;
         }
 
+        public void addHinge(int node)
+        {
+            if (node == startNode.ID) hinge += 1;
+            if (node == endNode.ID) hinge += 2;
+        }
         public double[] ElasticLineX, ElasticLineY, ElasticLineZ;
         public double[] NormalForce, ShearForceY, ShearForceZ;
         public double[] BendingMomentY, BendingMomentZ, Torsion;
@@ -38,7 +43,8 @@ namespace Solver
         {
             double[,] localStiffnessMatrix = new double[12,12];
             double X = E * A / L;
-            if (!(startNode.hinge || endNode.hinge)) // Regular Beam
+            //if (!(startNode.hinge || endNode.hinge)) // Regular Beam
+            if (hinge == 0) // Regular Beam
             {
                 double Y1 = 12 * E * Iz / (L * L * L);
                 double Z1 = 12 * E * Iy / (L * L * L);
@@ -63,7 +69,7 @@ namespace Solver
                                                        {  0,   0, -Z2,  0,  Z4,   0,  0,   0, -Z2,  0,  Z3,   0 },
                                                        {  0,  Y2,   0,  0,   0,  Y4,  0, -Y2,   0,  0,   0,  Y3 } };
             }
-            else if (startNode.hinge && endNode.hinge) // Truss
+            else if (hinge == 3) // Truss
             {
                 localStiffnessMatrix[0, 0] = localStiffnessMatrix[6, 6] = X;
                 localStiffnessMatrix[0, 6] = localStiffnessMatrix[6, 0] = -X;
@@ -73,21 +79,22 @@ namespace Solver
                 double Y1 = 3 * E * Iz / (L * L * L);
                 double Z1 = 3 * E * Iy / (L * L * L);
                 double Y2 = 3 * E * Iz / (L * L);
+                double S = G * J / L;
                 double Z2 = 3 * E * Iy / (L * L);
                 double Y3 = 3 * E * Iz / L;
                 double Z3 = 3 * E * Iy / L;
-                if (startNode.hinge) // Hinge at start
+                if (hinge == 1) // Hinge at start
                 {
                     localStiffnessMatrix = new double[,] { {  X,   0,   0, 0, 0, 0, -X,   0,   0, 0,   0,   0 },
                                                            {  0,  Y1,   0, 0, 0, 0,  0, -Y1,   0, 0,   0,  Y2 },
                                                            {  0,   0,  Z1, 0, 0, 0,  0,   0, -Z1, 0, -Z2,   0 },
-                                                           {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
+                                                           {  0,   0,   0, S, 0, 0,  0,   0,   0, -S,   0,   0 },
                                                            {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
                                                            {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
                                                            { -X,   0,   0, 0, 0, 0,  X,   0,   0, 0,   0,   0 },
                                                            {  0, -Y1,   0, 0, 0, 0,  0,  Y1,   0, 0,   0, -Y2 },
                                                            {  0,   0, -Z1, 0, 0, 0,  0,   0,  Z1, 0, -Z2,   0 },
-                                                           {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
+                                                           {  0,   0,   0, -S, 0, 0,  0,   0,   0, S,   0,   0 },
                                                            {  0,   0, -Z2, 0, 0, 0,  0,   0, -Z2, 0,  Z3,   0 },
                                                            {  0,  Y2,   0, 0, 0, 0,  0, -Y2,   0, 0,   0,  Y3 } };
                 }
@@ -96,13 +103,13 @@ namespace Solver
                     localStiffnessMatrix = new double[,] { {  X,   0,   0, 0,   0,   0, -X,   0,   0, 0, 0, 0 },
                                                            {  0,  Y1,   0, 0,   0,  Y2,  0, -Y1,   0, 0, 0, 0 },
                                                            {  0,   0,  Z1, 0, -Z2,   0,  0,   0, -Z1, 0, 0, 0 },
-                                                           {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 },
-                                                           {  0,   0, -Z2, 0,  Z3,   0,  0,   0, -Z2, 0, 0, 0 },
+                                                           {  0,   0,   0, S,   0,   0,  0,   0,   0, -S, 0, 0 },
+                                                           {  0,   0, -Z2, 0,  Z3,   0,  0,   0,  Z2, 0, 0, 0 },
                                                            {  0,  Y2,   0, 0,   0,  Y3,  0, -Y2,   0, 0, 0, 0 },
                                                            { -X,   0,   0, 0,   0,   0,  X,   0,   0, 0, 0, 0 },
                                                            {  0, -Y1,   0, 0,   0, -Y2,  0,  Y1,   0, 0, 0, 0 },
-                                                           {  0,   0, -Z1, 0, -Z2,   0,  0,   0,  Z1, 0, 0, 0 },
-                                                           {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 },
+                                                           {  0,   0, -Z1, 0,  Z2,   0,  0,   0,  Z1, 0, 0, 0 },
+                                                           {  0,   0,   0, -S,   0,   0,  0,   0,   0, S, 0, 0 },
                                                            {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 },
                                                            {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 } };
                 }

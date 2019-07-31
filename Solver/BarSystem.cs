@@ -68,7 +68,6 @@ namespace Solver
             DenseMatrix RestrictedStiffnessMatrix = DenseMatrix.OfMatrix(SystemStiffnessMatrix);
             DenseVector RestrictedForcesVector = DenseVector.OfVector(NodalForcesVector);
 
-
             int Nodes_n = this.Nodes.GetLength(0);
             for (int i = 0; i < Nodes_n; i++){
                 Node node = Nodes[i];
@@ -80,15 +79,19 @@ namespace Solver
                         RestrictedForcesVector[DOF_n] = node.ForcedDisplacements[r];
                         for (int j = 0; j < Nodes_n * 6; j++)
                         {
-                            RestrictedForcesVector[j] -= RestrictedStiffnessMatrix[j, DOF_n]*node.ForcedDisplacements[r];
+                            if (j != DOF_n)
+                            {
+                                RestrictedForcesVector[j] -= RestrictedStiffnessMatrix[j, DOF_n]*node.ForcedDisplacements[r];
+                            }
                             RestrictedStiffnessMatrix[DOF_n, j] = 0;
                             RestrictedStiffnessMatrix[j, DOF_n] = 0;
                         }
                         RestrictedStiffnessMatrix[DOF_n, DOF_n] = 1;
+
                     }
                 }
             }
-            //Console.Write(SystemStiffnessMatrix);
+
             NodalDisplacementsVector = DenseVector.OfVector(RestrictedStiffnessMatrix.Solve(RestrictedForcesVector));
         }
 
@@ -113,7 +116,7 @@ namespace Solver
             {
                 int nodeID = node.ID;
                 NodalDisplacementsVector.CopySubVectorTo(node.NodalDisplacements, 6 * nodeID, 0, 6);
-                ReactionsVector.CopySubVectorTo(node.NodalReactions, 6 * nodeID, 0, 6);
+                ReactionsVector.CopySubVectorTo(node.EndForces, 6 * nodeID, 0, 6);
             }
             foreach (Element element in Elements)
             {

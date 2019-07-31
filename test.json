@@ -25,6 +25,12 @@
 		},
 		{
 			"ID": 1,
+			"x": 0.5,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"ID": 2,
 			"x": 1,
 			"y": 0,
 			"z": 0
@@ -38,6 +44,13 @@
 			"End Node": 1,
 			"Material": "Steel",
 			"Section": 0
+		},
+		{
+			"ID": 1,
+			"Start Node": 1,
+			"End Node": 2,
+			"Material": "Steel",
+			"Section": 0
 		}
 	],
 
@@ -48,7 +61,7 @@
 	"Loads":[
 		{
 			"Node": 1,
-			"Forces":  [0, -10000, 0],
+			"Forces": [0, -10000, 0],
 			"Moments": [0, 0, 0]
 		}
 	],
@@ -61,6 +74,10 @@
 		{
 			"Type": "Mount",
 			"Node": 0
+		},
+		{
+			"Type": "Fixed Support",
+			"Node": 2
 		}
 	],
 
@@ -69,6 +86,10 @@
 	],
 
 	"Forced Displacements": [
-
+		{
+			"Node": 2,
+			"Displacements": [0, 0.001, 0],
+			"Rotations": [0, 0, 0]
+		}
 	]
 }
