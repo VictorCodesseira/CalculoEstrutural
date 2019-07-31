@@ -43,7 +43,6 @@ namespace Solver
         {
             double[,] localStiffnessMatrix = new double[12,12];
             double X = E * A / L;
-            //if (!(startNode.hinge || endNode.hinge)) // Regular Beam
             if (hinge == 0) // Regular Beam
             {
                 double Y1 = 12 * E * Iz / (L * L * L);
@@ -199,7 +198,6 @@ namespace Solver
             BendingMomentZ = new double[] { 2 * E * Iz * ElasticLineY[2], 6 * E * Iz * ElasticLineY[3], 12 * E * Iz * ElasticLineY[4], 20 * E * Iz * ElasticLineY[5] };
             ShearForceY = new double[] { BendingMomentZ[1], 2 * BendingMomentZ[2], 3 * BendingMomentZ[3] };
             ShearForceZ = new double[] { BendingMomentY[1], 2 * BendingMomentY[2], 3 * BendingMomentY[3] };
-
             Torsion = new double[] { NodalDisplacementsVector[9]-NodalDisplacementsVector[3]*G*J/L };
         }
 
