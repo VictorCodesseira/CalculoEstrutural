@@ -1,11 +1,12 @@
 ﻿using MathNet.Numerics.LinearAlgebra.Double;
+using System;
 
 namespace Solver
 {
     class CurvedBeam : Element
     {
 
-        Node centerNode;
+        Node middleNode;
         double L;
         double kappa;
 
@@ -13,11 +14,50 @@ namespace Solver
             :base(startNode, endNode, material, section, ID)
         {
             this.Type = "Curved Beam";
-            this.centerNode = centerNode;
 
-            // TODO
-            this.L = 1;
-            this.kappa = 1;
+            double R = startNode.Distance(centerNode);
+            kappa = 1 / R;
+
+            double x1 = startNode.Position.x;
+            double y1 = startNode.Position.y;
+            double z1 = startNode.Position.z;
+
+            double x2 = endNode.Position.x;
+            double y2 = endNode.Position.y;
+            double z2 = endNode.Position.z;
+
+            double xc = centerNode.Position.x;
+            double yc = centerNode.Position.y;
+            double zc = centerNode.Position.z;
+
+            double u1 = x1 - xc;
+            double v1 = y1 - yc;
+            double w1 = z1 - zc;
+            double u2 = x2 - xc;
+            double v2 = y2 - yc;
+            double w2 = z2 - zc;
+
+            double cosAng = u1 * u2 + v1 * v2 + w1 * w2;
+
+            double Ang = Math.Acos(cosAng);
+
+            L = Ang * R;
+
+            double xm = (x1 + x2) / 2;
+            double ym = (y1 + y2) / 2;
+            double zm = (z1 + z2) / 2;
+
+            double um = (xm - xc);
+            double vm = (ym - yc);
+            double wm = (zm - zc);
+
+            double a = Math.Sqrt(((um) * (um) + (vm) * (vm) + (wm) * (wm)) / (R * R));
+
+            double x3 = xc + um * a;
+            double y3 = yc + vm * a;
+            double z3 = zc + wm * a;
+
+            this.middleNode = new Node(x3, y3, z3, centerNode.ID);
         }
 
         public override void SetAddressTable()
@@ -26,7 +66,7 @@ namespace Solver
             for (int i = 0; i < 6; i++)
             {
                 addressTable[i] = startNode.ID * 6 + i;
-                addressTable[i + 6] = centerNode.ID * 6 + i;
+                addressTable[i + 6] = middleNode.ID * 6 + i;
                 addressTable[2*i + 6] = endNode.ID * 6 + i;
             }
             AddressTable = addressTable;
