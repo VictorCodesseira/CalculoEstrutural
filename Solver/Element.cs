@@ -12,6 +12,8 @@ namespace Solver
         public int ID;
         protected double E, A, G, J, Iy, Iz;
         protected Node startNode, endNode;
+        protected Node[] nodesList;
+        protected int nodesAmount;
 
         [JsonIgnore]
         public int[] AddressTable { get; protected set; }
@@ -62,9 +64,12 @@ namespace Solver
         {
             get
             {
-                DenseVector GlobalDisplacements = new DenseVector(12);
-                startNode.NodalDisplacements.CopySubVectorTo(GlobalDisplacements, 0, 0, 6);
-                endNode.NodalDisplacements.CopySubVectorTo(GlobalDisplacements, 0, 6, 6);
+                DenseVector GlobalDisplacements = new DenseVector(nodesAmount*6);
+
+                for (int i = 0; i < nodesAmount; i++)
+                {
+                    nodesList[i].NodalDisplacements.CopySubVectorTo(GlobalDisplacements, 0, 6 * i, 6);
+                }
 
                 return DenseVector.OfVector(RotationMatrix.Inverse() * GlobalDisplacements);
             }
@@ -86,7 +91,6 @@ namespace Solver
 
         private void CalculateRotationMatrix()
         {
-            DenseMatrix temp_RotationMatrix = new DenseMatrix(12);
             Vector3D startPos = startNode.Position, endPos = endNode.Position;
             double dx, dy, dz;
             double nx, ny, nz;
@@ -130,11 +134,12 @@ namespace Solver
 
             DenseMatrix sub_RotationMatrix = (Math.Pow(q1, 2) - (q * qT)[0, 0]) * I + 2 * qT * q + 2 * q1 * qS;
 
-            temp_RotationMatrix.SetSubMatrix(0, 0, sub_RotationMatrix);
-            temp_RotationMatrix.SetSubMatrix(3, 3, sub_RotationMatrix);
-            temp_RotationMatrix.SetSubMatrix(6, 6, sub_RotationMatrix);
-            temp_RotationMatrix.SetSubMatrix(9, 9, sub_RotationMatrix);
+            DenseMatrix temp_RotationMatrix = new DenseMatrix(nodesAmount*6);
 
+            for(int i = 0; i < nodesAmount*6; i += 3)
+            {
+                temp_RotationMatrix.SetSubMatrix(i, i, sub_RotationMatrix);
+            }
 
             RotationMatrix = temp_RotationMatrix;
         }

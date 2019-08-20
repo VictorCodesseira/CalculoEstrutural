@@ -14,6 +14,7 @@ namespace Solver
             :base(startNode, endNode, material, section, ID)
         {
             this.Type = "Curved Beam";
+            this.nodesAmount = 3;
 
             double R = startNode.Distance(centerNode);
             kappa = 1 / R;
@@ -51,13 +52,14 @@ namespace Solver
             double vm = (ym - yc);
             double wm = (zm - zc);
 
-            double a = Math.Sqrt(((um) * (um) + (vm) * (vm) + (wm) * (wm)) / (R * R));
+            double a = R / Math.Sqrt((um) * (um) + (vm) * (vm) + (wm) * (wm));
 
             double x3 = xc + um * a;
             double y3 = yc + vm * a;
             double z3 = zc + wm * a;
 
             this.middleNode = new Node(x3, y3, z3, centerNode.ID);
+            nodesList = new Node[] { startNode, middleNode, endNode };
         }
 
         public override void SetAddressTable()

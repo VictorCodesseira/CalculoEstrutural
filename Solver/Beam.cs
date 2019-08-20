@@ -12,6 +12,8 @@ namespace Solver
         {
             this.Type = "Beam";
             this.L = startNode.Distance(endNode);
+            this.nodesAmount = 2;
+            nodesList = new Node[] { startNode, endNode };
         }
 
         public void addLoad(DistributedLoad ld)

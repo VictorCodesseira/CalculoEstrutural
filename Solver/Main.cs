@@ -7,7 +7,7 @@ namespace Solver
     {
         static void Main()
         {
-            Calculate("D:/Repos/CalculoEstrutural/test.json");
+            Calculate("C:/Users/Victor/Repos/CalculoEstrutural/test.json");
         }
 
         static public void Calculate(string input_filename, string output_filename = "")

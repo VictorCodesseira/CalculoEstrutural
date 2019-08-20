@@ -25,8 +25,8 @@
 		},
 		{
 			"ID": 1,
-			"x": 0.5,
-			"y": 0,
+			"x": 1,
+			"y": 1,
 			"z": 0
 		},
 		{
@@ -38,24 +38,18 @@
 	],
 
 	"Beams":[
+
+	],
+
+	"Curved Beams":[
 		{
 			"ID": 0,
 			"Start Node": 0,
 			"End Node": 1,
-			"Material": "Steel",
-			"Section": 0
-		},
-		{
-			"ID": 1,
-			"Start Node": 1,
-			"End Node": 2,
+			"Center Node": 2,
 			"Material": "Steel",
 			"Section": 0
 		}
-	],
-
-	"Curved Beams":[
-		
 	],
 
 	"Loads":[
@@ -74,10 +68,6 @@
 		{
 			"Type": "Mount",
 			"Node": 0
-		},
-		{
-			"Type": "Fixed Support",
-			"Node": 2
 		}
 	],
 
@@ -86,10 +76,6 @@
 	],
 
 	"Forced Displacements": [
-		{
-			"Node": 2,
-			"Displacements": [0, 0.001, 0],
-			"Rotations": [0, 0, 0]
-		}
+
 	]
 }
