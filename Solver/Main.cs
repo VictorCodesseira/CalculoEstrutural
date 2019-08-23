@@ -5,11 +5,6 @@ namespace Solver
 {
     static public class Solver
     {
-        static void Main()
-        {
-            Calculate("C:/Users/Victor/Repos/CalculoEstrutural/test.json");
-        }
-
         static public void Calculate(string input_filename, string output_filename = "")
         {
             BarSystem Sys = JsonInterface.ReadInput(input_filename);
