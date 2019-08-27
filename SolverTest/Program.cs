@@ -10,7 +10,7 @@ namespace SolverTest
     {
         static void Main()
         {
-            Solver.Solver.Calculate("D:/Repos/CalculoEstrutural/SolverTest/test.json");
+            Solver.Solver.Calculate("C:/Users/Victor/Repos/CalculoEstrutural/SolverTest/save.json");
         }
     }
 }
