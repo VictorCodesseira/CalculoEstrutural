@@ -41,12 +41,12 @@
 
 	],
 
-	"Curved Beams":[
+	"CurvedBeams":[
 		{
 			"ID": 0,
-			"Start Node": 0,
-			"End Node": 1,
-			"Center Node": 2,
+			"StartNode": 0,
+			"EndNode": 1,
+			"CenterNode": 2,
 			"Material": "Steel",
 			"Section": 0
 		}
@@ -60,7 +60,7 @@
 		}
 	],
 
-	"Distributed Loads":[
+	"DistributedLoads":[
 
 	],
 
@@ -75,7 +75,7 @@
 
 	],
 
-	"Forced Displacements": [
+	"ForcedDisplacements": [
 
 	]
 }

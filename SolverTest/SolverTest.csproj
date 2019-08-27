@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="save.json" />
     <None Include="test.json" />
     <None Include="test_output.json" />
   </ItemGroup>
