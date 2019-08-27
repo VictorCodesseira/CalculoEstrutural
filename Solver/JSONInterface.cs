@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace Solver
 {
@@ -18,80 +19,108 @@ namespace Solver
 
             foreach (dynamic mat in json["Materials"]) // Create instances of materials
             {
-                double E = mat["E"];
-                double Poisson = mat["Poisson"];
-                string Name = mat["Name"];
+                double E = (double)mat["E"];
+                double Poisson = (double)mat["Poisson"];
+                string Name = (string)mat["Name"];
                 materials.Add(Name, new Material(E, Poisson, Name));
             }
 
             foreach (dynamic sect in json["Sections"]) // Create instances of sections
             {
-                int sectID = sect["ID"];
-                if (sect.Type == "Rectangular")
+                int sectID = (int)sect["ID"];
+                if ((string)sect["Type"] == "Rectangular")
                 {
-                    double width = sect["Width"];
-                    double height = sect["Height"];
+                    double width = (double)sect["Width"];
+                    double height = (double)sect["Height"];
                     sections[sectID] = new RectangularSection(width, height);
                 }
-                else if (sect.Type == "Circular")
+                else if ((string)sect["Type"] == "Circular")
                 {
-                    double radius = sect["Radius"];
+                    double radius = (double)sect["Radius"];
                     sections[sectID] = new CircularSection(radius);
                 } else
                 {
-                    double area = sect["Area"];
-                    double IY = sect["InertiaY"];
-                    double IZ = sect["InertiaZ"];
-                    double J = sect["PolarInertia"];
+                    double area = (double)sect["Area"];
+                    double IY = (double)sect["InertiaY"];
+                    double IZ = (double)sect["InertiaZ"];
+                    double J = (double)sect["PolarInertia"];
                     sections[sectID] = new Section(area, IY, IZ, J);
                 }
             }
 
             foreach (dynamic nd in json["Nodes"]) // Create instances of nodes
             {
-                int nodeID = nd["ID"];
-                double x = nd["x"];
-                double y = nd["y"];
-                double z = nd["z"];
+                int nodeID = (int)nd["ID"];
+                double x = (double)nd["x"];
+                double y = (double)nd["y"];
+                double z = (double)nd["z"];
                 nodes[nodeID] = new Node(x, y, z, nodeID);
             }
 
-            foreach (dynamic bm in json["Beams"]) // Create instances of beams, based on start and end nodes, section and materials
+            try
             {
-                int beamID = bm["ID"];
-                int startNodeID = bm["Start Node"];
-                int endNodeID = bm["End Node"];
-                string materialName = bm["Material"];
-                int sectID = bm["Section"];
-                elements[beamID] = new Beam(nodes[startNodeID], nodes[endNodeID], materials[materialName], sections[sectID], beamID);
+                foreach (dynamic bm in json["Beams"]) // Create instances of beams, based on start and end nodes, section and materials
+                {
+                    int beamID = (int)bm["ID"];
+                    int startNodeID = (int)bm["StartNode"];
+                    int endNodeID = (int)bm["EndNode"];
+                    string materialName = (string)bm["Material"];
+                    int sectID = (int)bm["Section"];
+                    elements[beamID] = new Beam(nodes[startNodeID], nodes[endNodeID], materials[materialName], sections[sectID], beamID);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("No regular beam");
             }
 
-            foreach (dynamic cbm in json["Curved Beams"]) // Create instances of curved beams, based on start, center and end nodes, section and materials
+            try
             {
-                int beamID = cbm["ID"];
-                int startNodeID = cbm["Start Node"];
-                int centerNodeID = cbm["Center Node"];
-                int endNodeID = cbm["End Node"];
-                string materialName = cbm["Material"];
-                int sectID = cbm["Section"];
-                elements[beamID] = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                foreach (dynamic cbm in json["CurvedBeams"]) // Create instances of curved beams, based on start, center and end nodes, section and materials
+                {
+                    int beamID = (int)cbm["ID"];
+                    int startNodeID = (int)cbm["StartNode"];
+                    int centerNodeID = (int)cbm["CenterNode"];
+                    int endNodeID = (int)cbm["EndNode"];
+                    string materialName = (string)cbm["Material"];
+                    int sectID = (int)cbm["Section"];
+                    elements[beamID] = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("No Curved Beams");
             }
 
-            foreach (dynamic ld in json["Loads"]) // Add loads to nodes
+            try
             {
-                int nodeID = ld["Node"];
-                double[] vector = new double[6];
-                ld["Forces"].ToObject<double[]>().CopyTo(vector, 0);
-                ld["Moments"].ToObject<double[]>().CopyTo(vector, 3);
-                nodes[nodeID].addLoad(new Load(vector));
+                foreach (dynamic ld in json["Loads"]) // Add loads to nodes
+                {
+                    int nodeID = (int)ld["Node"];
+                    double[] vector = new double[6];
+                    ld["Forces"].ToObject<double[]>().CopyTo(vector, 0);
+                    ld["Moments"].ToObject<double[]>().CopyTo(vector, 3);
+                    nodes[nodeID].addLoad(new Load(vector));
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("No point loads");
             }
 
-            foreach (dynamic dld in json["Distributed Loads"]) // Add distributed loads to beams
+            try
             {
-                int beamID = dld["Beam"];
-                double[] startVector = dld["Start Vector"].ToObject<double[]>();
-                double[] endVector = dld["End Vector"].ToObject<double[]>();
-                (elements[beamID] as Beam).addLoad(new DistributedLoad(startVector, endVector));
+                foreach (dynamic dld in json["DistributedLoads"]) // Add distributed loads to beams
+                {
+                    int beamID = (int)dld["Beam"];
+                    double[] startVector = dld["Start Vector"].ToObject<double[]>();
+                    double[] endVector = dld["End Vector"].ToObject<double[]>();
+                    (elements[beamID] as Beam).addLoad(new DistributedLoad(startVector, endVector));
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("No distributed loads");
             }
 
             Dictionary<string, int> directions = new Dictionary<string, int>();
@@ -100,8 +129,8 @@ namespace Solver
             directions["z"] = 2;
             foreach (dynamic lk in json["Links"]) // Add links to nodes
             {
-                int node = lk["Node"];
-                string type = lk["Type"];
+                int node = (int)lk["Node"];
+                string type = (string)lk["Type"];
                 string dir;
                 Link link;
                 switch (type)
@@ -113,11 +142,11 @@ namespace Solver
                         link = new Fixed_Support();
                         break;
                     case "Support":
-                        dir = lk["Direction"];
+                        dir = (string)lk["Direction"];
                         link = new Support(directions[dir]);
                         break;
                     case "Ring":
-                        dir = lk["Direction"];
+                        dir = (string)lk["Direction"];
                         link = new Ring(directions[dir]);
                         break;
                     default:
@@ -129,20 +158,34 @@ namespace Solver
                 nodes[node].addLink(link);
             }
 
-            foreach (dynamic hin in json["Hinges"]) // Add hinges to nodes
+            try
             {
-                int beam = hin["Beam"];
-                int node = hin["Node"];
-                ((Beam)elements[beam]).addHinge(node);
+                foreach (dynamic hin in json["Hinges"]) // Add hinges to nodes
+                {
+                    int beam = (int)hin["Beam"];
+                    int node = (int)hin["Node"];
+                    ((Beam)elements[beam]).addHinge(node);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("No hinges");
             }
 
-            foreach (dynamic fd in json["Forced Displacements"]) // Add displacements to nodes
+            try
             {
-                int node = fd["Node"];
-                double[] disp = fd["Displacements"].ToObject<double[]>();
-                double[] rot = fd["Rotations"].ToObject<double[]>();
-                nodes[node].addForcedDisplacement(disp[0], disp[1], disp[2]);
-                nodes[node].addForcedRotation(rot[0], rot[1], rot[2]);
+                foreach (dynamic fd in json["ForcedDisplacements"]) // Add displacements to nodes
+                {
+                    int node = (int)fd["Node"];
+                    double[] disp = fd["Displacements"].ToObject<double[]>();
+                    double[] rot = fd["Rotations"].ToObject<double[]>();
+                    nodes[node].addForcedDisplacement(disp[0], disp[1], disp[2]);
+                    nodes[node].addForcedRotation(rot[0], rot[1], rot[2]);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                Console.Write("No forced displacements");
             }
 
             Node[] nodes_array = new Node[nodes.Count]; 
