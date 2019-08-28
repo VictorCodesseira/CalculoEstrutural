@@ -6,12 +6,19 @@ namespace Solver
     {
         private DistributedLoad load;
         private double L { get; set; }
-        private int hinge; // 0 = none, 1 = start, 2 = end, 3 = both
+        private double E, A, G, J, Iy, Iz;
+
         public Beam(Node startNode, Node endNode, Material material, Section section, int ID)
-            : base(startNode, endNode, material, section, ID)
+            : base(startNode, endNode, ID)
         {
             this.Type = "Beam";
             this.L = startNode.Distance(endNode);
+            this.E = material.E;
+            this.G = material.G;
+            this.A = section.Area;
+            this.Iy = section.InertiaY;
+            this.Iz = section.InertiaZ;
+            this.J = section.J;
             this.nodesAmount = 2;
             nodesList = new Node[] { startNode, endNode };
         }
@@ -21,11 +28,6 @@ namespace Solver
             this.load = ld;
         }
 
-        public void addHinge(int node)
-        {
-            if (node == startNode.ID) hinge += 1;
-            if (node == endNode.ID) hinge += 2;
-        }
         public double[] ElasticLineX, ElasticLineY, ElasticLineZ;
         public double[] NormalForce, ShearForceY, ShearForceZ;
         public double[] BendingMomentY, BendingMomentZ, Torsion;
@@ -45,76 +47,30 @@ namespace Solver
         {
             double[,] localStiffnessMatrix = new double[12,12];
             double X = E * A / L;
-            if (hinge == 0) // Regular Beam
-            {
-                double Y1 = 12 * E * Iz / (L * L * L);
-                double Z1 = 12 * E * Iy / (L * L * L);
-                double Y2 = 6 * E * Iz / (L * L);
-                double Z2 = 6 * E * Iy / (L * L);
-                double S = G * J / L;
-                double Y3 = 4 * E * Iz / L;
-                double Z3 = 4 * E * Iy / L;
-                double Y4 = Y3 / 2;
-                double Z4 = Z3 / 2;
 
-                localStiffnessMatrix = new double[,] { {  X,   0,   0,  0,   0,   0, -X,   0,   0,  0,   0,   0 },
-                                                       {  0,  Y1,   0,  0,   0,  Y2,  0, -Y1,   0,  0,   0,  Y2 },
-                                                       {  0,   0,  Z1,  0, -Z2,   0,  0,   0, -Z1,  0, -Z2,   0 },
-                                                       {  0,   0,   0,  S,   0,   0,  0,   0,   0, -S,   0,   0 },
-                                                       {  0,   0, -Z2,  0,  Z3,   0,  0,   0,  Z2,  0,  Z4,   0 },
-                                                       {  0,  Y2,   0,  0,   0,  Y3,  0, -Y2,   0,  0,   0,  Y4 },
-                                                       { -X,   0,   0,  0,   0,   0,  X,   0,   0,  0,   0,   0 },
-                                                       {  0, -Y1,   0,  0,   0, -Y2,  0,  Y1,   0,  0,   0, -Y2 },
-                                                       {  0,   0, -Z1,  0,  Z2,   0,  0,   0,  Z1,  0,  Z2,   0 },
-                                                       {  0,   0,   0, -S,   0,   0,  0,   0,   0,  S,   0,   0 },
-                                                       {  0,   0, -Z2,  0,  Z4,   0,  0,   0,  Z2,  0,  Z3,   0 },
-                                                       {  0,  Y2,   0,  0,   0,  Y4,  0, -Y2,   0,  0,   0,  Y3 } };
-            }
-            else if (hinge == 3) // Truss
-            {
-                localStiffnessMatrix[0, 0] = localStiffnessMatrix[6, 6] = X;
-                localStiffnessMatrix[0, 6] = localStiffnessMatrix[6, 0] = -X;
-            }
-            else
-            {
-                double Y1 = 3 * E * Iz / (L * L * L);
-                double Z1 = 3 * E * Iy / (L * L * L);
-                double Y2 = 3 * E * Iz / (L * L);
-                double S = G * J / L;
-                double Z2 = 3 * E * Iy / (L * L);
-                double Y3 = 3 * E * Iz / L;
-                double Z3 = 3 * E * Iy / L;
-                if (hinge == 1) // Hinge at start
-                {
-                    localStiffnessMatrix = new double[,] { {  X,   0,   0, 0, 0, 0, -X,   0,   0, 0,   0,   0 },
-                                                           {  0,  Y1,   0, 0, 0, 0,  0, -Y1,   0, 0,   0,  Y2 },
-                                                           {  0,   0,  Z1, 0, 0, 0,  0,   0, -Z1, 0, -Z2,   0 },
-                                                           {  0,   0,   0, S, 0, 0,  0,   0,   0, -S,   0,   0 },
-                                                           {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
-                                                           {  0,   0,   0, 0, 0, 0,  0,   0,   0, 0,   0,   0 },
-                                                           { -X,   0,   0, 0, 0, 0,  X,   0,   0, 0,   0,   0 },
-                                                           {  0, -Y1,   0, 0, 0, 0,  0,  Y1,   0, 0,   0, -Y2 },
-                                                           {  0,   0, -Z1, 0, 0, 0,  0,   0,  Z1, 0,  Z2,   0 },
-                                                           {  0,   0,   0, -S, 0, 0,  0,   0,   0, S,   0,   0 },
-                                                           {  0,   0, -Z2, 0, 0, 0,  0,   0,  Z2, 0,  Z3,   0 },
-                                                           {  0,  Y2,   0, 0, 0, 0,  0, -Y2,   0, 0,   0,  Y3 } };
-                }
-                else // Hinge at end
-                {
-                    localStiffnessMatrix = new double[,] { {  X,   0,   0, 0,   0,   0, -X,   0,   0, 0, 0, 0 },
-                                                           {  0,  Y1,   0, 0,   0,  Y2,  0, -Y1,   0, 0, 0, 0 },
-                                                           {  0,   0,  Z1, 0, -Z2,   0,  0,   0, -Z1, 0, 0, 0 },
-                                                           {  0,   0,   0, S,   0,   0,  0,   0,   0, -S, 0, 0 },
-                                                           {  0,   0, -Z2, 0,  Z3,   0,  0,   0,  Z2, 0, 0, 0 },
-                                                           {  0,  Y2,   0, 0,   0,  Y3,  0, -Y2,   0, 0, 0, 0 },
-                                                           { -X,   0,   0, 0,   0,   0,  X,   0,   0, 0, 0, 0 },
-                                                           {  0, -Y1,   0, 0,   0, -Y2,  0,  Y1,   0, 0, 0, 0 },
-                                                           {  0,   0, -Z1, 0,  Z2,   0,  0,   0,  Z1, 0, 0, 0 },
-                                                           {  0,   0,   0, -S,   0,   0,  0,   0,   0, S, 0, 0 },
-                                                           {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 },
-                                                           {  0,   0,   0, 0,   0,   0,  0,   0,   0, 0, 0, 0 } };
-                }
-            }
+            double Y1 = 12 * E * Iz / (L * L * L);
+            double Z1 = 12 * E * Iy / (L * L * L);
+            double Y2 = 6 * E * Iz / (L * L);
+            double Z2 = 6 * E * Iy / (L * L);
+            double S = G * J / L;
+            double Y3 = 4 * E * Iz / L;
+            double Z3 = 4 * E * Iy / L;
+            double Y4 = Y3 / 2;
+            double Z4 = Z3 / 2;
+
+            localStiffnessMatrix = new double[,] { {  X,   0,   0,  0,   0,   0, -X,   0,   0,  0,   0,   0 },
+                                                    {  0,  Y1,   0,  0,   0,  Y2,  0, -Y1,   0,  0,   0,  Y2 },
+                                                    {  0,   0,  Z1,  0, -Z2,   0,  0,   0, -Z1,  0, -Z2,   0 },
+                                                    {  0,   0,   0,  S,   0,   0,  0,   0,   0, -S,   0,   0 },
+                                                    {  0,   0, -Z2,  0,  Z3,   0,  0,   0,  Z2,  0,  Z4,   0 },
+                                                    {  0,  Y2,   0,  0,   0,  Y3,  0, -Y2,   0,  0,   0,  Y4 },
+                                                    { -X,   0,   0,  0,   0,   0,  X,   0,   0,  0,   0,   0 },
+                                                    {  0, -Y1,   0,  0,   0, -Y2,  0,  Y1,   0,  0,   0, -Y2 },
+                                                    {  0,   0, -Z1,  0,  Z2,   0,  0,   0,  Z1,  0,  Z2,   0 },
+                                                    {  0,   0,   0, -S,   0,   0,  0,   0,   0,  S,   0,   0 },
+                                                    {  0,   0, -Z2,  0,  Z4,   0,  0,   0,  Z2,  0,  Z3,   0 },
+                                                    {  0,  Y2,   0,  0,   0,  Y4,  0, -Y2,   0,  0,   0,  Y3 } };
+
             LocalStiffnessMatrix = DenseMatrix.OfArray(localStiffnessMatrix);
         }
 

@@ -15,6 +15,10 @@ namespace Solver
         {
             this.FVector = new DenseVector(FVector);
         }
+        public void Divide(double value)
+        {
+            this.FVector = (DenseVector)this.FVector.Divide(value);
+        }
     }
 
     class DistributedLoad

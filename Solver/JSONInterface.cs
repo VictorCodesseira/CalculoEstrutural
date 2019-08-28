@@ -162,9 +162,25 @@ namespace Solver
             {
                 foreach (dynamic hin in json["Hinges"]) // Add hinges to nodes
                 {
-                    int beam = (int)hin["Beam"];
-                    int node = (int)hin["Node"];
-                    ((Beam)elements[beam]).addHinge(node);
+                    int nodeID = (int)hin["Node"];
+                    Node releaseStartNode = nodes[nodeID];
+                    Node releaseEndNode = new Node(releaseStartNode.Position.x, releaseStartNode.Position.y, releaseStartNode.Position.z, nodes.Count);
+                    releaseStartNode.load.Divide(2);
+                    releaseEndNode.addLoad(releaseStartNode.load);
+                    nodes[nodes.Count] = releaseEndNode;
+                    foreach(Element el in elements.Values)
+                    {
+                        if (el.startNode.ID == nodeID)
+                        {
+                            el.startNode = releaseEndNode;
+                            break;
+                        } else if (el.endNode.ID == nodeID)
+                        {
+                            el.endNode = releaseEndNode;
+                            break;
+                        }
+                    }
+                    elements[elements.Count] = new Release(releaseStartNode, releaseEndNode, elements.Count);
                 }
             }
             catch (NullReferenceException)

@@ -10,8 +10,8 @@ namespace Solver
         public string Type { get; protected set; }
         [JsonProperty(Order = -2)]
         public int ID;
-        protected double E, A, G, J, Iy, Iz;
-        protected Node startNode, endNode;
+        
+        public Node startNode, endNode;
         protected Node[] nodesList;
         protected int nodesAmount;
 
@@ -27,20 +27,11 @@ namespace Solver
         [JsonIgnore]
         public DenseVector EquivalentNodalForcesVector { get; protected set; }
 
-        public Element(Node startNode, Node endNode, Material material, Section section, int ID)
+        public Element(Node startNode, Node endNode, int ID)
         {
             this.startNode = startNode;
             this.endNode = endNode;
-            this.E = material.E;
-            this.G = material.G;
-            this.A = section.Area;
-            this.Iy = section.InertiaY;
-            this.Iz = section.InertiaZ;
-            this.J = section.J;
             this.ID = ID;
-
-            int startID = startNode.ID;
-            int endID = endNode.ID;
         }
 
         public void CalculateMatrices()
@@ -50,6 +41,7 @@ namespace Solver
             CalculateLocalStiffnessMatrix();
             CalculateEquivalentNodalForcesVector();
         }
+
         [JsonIgnore]
         public DenseMatrix GlobalStiffnessMatrix
         {

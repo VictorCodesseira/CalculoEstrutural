@@ -97,8 +97,8 @@ namespace Solver
 
         private void CalculateReactions()
         {
-            System.Console.Write(SystemStiffnessMatrix.ToMatrixString(12,12));
-            System.Console.Write(NodalDisplacementsVector.ToVectorString(12,12));
+            System.Console.Write(SystemStiffnessMatrix.ToMatrixString(24,24));
+            System.Console.Write(NodalDisplacementsVector.ToVectorString(24,24));
             ReactionsVector = SystemStiffnessMatrix * NodalDisplacementsVector;
         }
 

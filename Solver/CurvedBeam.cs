@@ -9,11 +9,18 @@ namespace Solver
         Node middleNode;
         double L;
         double kappa;
+        private double E, A, G, J, Iy, Iz;
 
         public CurvedBeam(Node startNode, Node endNode, Node centerNode, Material material, Section section, int ID)
-            :base(startNode, endNode, material, section, ID)
+            :base(startNode, endNode, ID)
         {
             this.Type = "Curved Beam";
+            this.E = material.E;
+            this.G = material.G;
+            this.A = section.Area;
+            this.Iy = section.InertiaY;
+            this.Iz = section.InertiaZ;
+            this.J = section.J;
             this.nodesAmount = 3;
 
             double R = startNode.Distance(centerNode);
