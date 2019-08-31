@@ -10,7 +10,8 @@ namespace Solver
         public string Type { get; protected set; }
         [JsonProperty(Order = -2)]
         public int ID;
-        
+
+        [JsonIgnore]
         public Node startNode, endNode;
         protected Node[] nodesList;
         protected int nodesAmount;

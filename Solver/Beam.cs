@@ -58,7 +58,7 @@ namespace Solver
             double Y4 = Y3 / 2;
             double Z4 = Z3 / 2;
 
-            localStiffnessMatrix = new double[,] { {  X,   0,   0,  0,   0,   0, -X,   0,   0,  0,   0,   0 },
+            localStiffnessMatrix = new double[,] {  {  X,   0,   0,  0,   0,   0, -X,   0,   0,  0,   0,   0 },
                                                     {  0,  Y1,   0,  0,   0,  Y2,  0, -Y1,   0,  0,   0,  Y2 },
                                                     {  0,   0,  Z1,  0, -Z2,   0,  0,   0, -Z1,  0, -Z2,   0 },
                                                     {  0,   0,   0,  S,   0,   0,  0,   0,   0, -S,   0,   0 },
@@ -137,8 +137,8 @@ namespace Solver
             }
             ElasticLineZ = new double[] { w0,
                                           phi0,
-                                          (2 * L5 * a0 + 5 * L4 * b0 - 360 * E * I * w0 + 360 * E * I * wL + 240 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L2),
-                                          -(3 * L5 * a0 + 10 * L4 * b0 - 240 * E * I * w0 + 240 * E * I * wL + 120 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L3),
+                                          -(-2 * L5 * a0 - 5 * L4 * b0 - 360 * E * I * w0 + 360 * E * I * wL + 240 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L2),
+                                          (-3 * L5 * a0 - 10 * L4 * b0 - 240 * E * I * w0 + 240 * E * I * wL + 120 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L3),
                                           b0 / (24 * E * I),
                                           a0 / (120 * E * I) };
         }
@@ -156,7 +156,7 @@ namespace Solver
             BendingMomentZ = new double[] { 2 * E * Iz * ElasticLineY[2], 6 * E * Iz * ElasticLineY[3], 12 * E * Iz * ElasticLineY[4], 20 * E * Iz * ElasticLineY[5] };
             ShearForceY = new double[] { BendingMomentZ[1], 2 * BendingMomentZ[2], 3 * BendingMomentZ[3] };
             ShearForceZ = new double[] { BendingMomentY[1], 2 * BendingMomentY[2], 3 * BendingMomentY[3] };
-            Torsion = new double[] { NodalDisplacementsVector[9]-NodalDisplacementsVector[3]*G*J/L };
+            Torsion = new double[] { (NodalDisplacementsVector[9]-NodalDisplacementsVector[3])*G*J/L };
         }
 
     }

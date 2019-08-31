@@ -35,6 +35,8 @@ namespace Solver
         {
             double[,] localStiffnessMatrix = new double[12, 12];
 
+            double penalty = 1e14;
+
             localStiffnessMatrix = new double[,] { {   1,  0,  0, 0, 0, 0, -1,  0,  0, 0, 0, 0 },
                                                     {  0,  1,  0, 0, 0, 0,  0, -1,  0, 0, 0, 0 },
                                                     {  0,  0,  1, 0, 0, 0,  0,  0, -1, 0, 0, 0 },
@@ -49,7 +51,7 @@ namespace Solver
                                                     {  0,  0,  0, 0, 0, 0,  0,  0,  0, 0, 0, 0 } };
           
 
-            LocalStiffnessMatrix = DenseMatrix.OfArray(localStiffnessMatrix);
+            LocalStiffnessMatrix = penalty*DenseMatrix.OfArray(localStiffnessMatrix);
         }
 
         protected override void CalculateEquivalentNodalForcesVector()

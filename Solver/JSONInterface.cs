@@ -113,8 +113,8 @@ namespace Solver
                 foreach (dynamic dld in json["DistributedLoads"]) // Add distributed loads to beams
                 {
                     int beamID = (int)dld["Beam"];
-                    double[] startVector = dld["Start Vector"].ToObject<double[]>();
-                    double[] endVector = dld["End Vector"].ToObject<double[]>();
+                    double[] startVector = dld["StartVector"].ToObject<double[]>();
+                    double[] endVector = dld["EndVector"].ToObject<double[]>();
                     (elements[beamID] as Beam).addLoad(new DistributedLoad(startVector, endVector));
                 }
             }
@@ -165,8 +165,6 @@ namespace Solver
                     int nodeID = (int)hin["Node"];
                     Node releaseStartNode = nodes[nodeID];
                     Node releaseEndNode = new Node(releaseStartNode.Position.x, releaseStartNode.Position.y, releaseStartNode.Position.z, nodes.Count);
-                    releaseStartNode.load.Divide(2);
-                    releaseEndNode.addLoad(releaseStartNode.load);
                     nodes[nodes.Count] = releaseEndNode;
                     foreach(Element el in elements.Values)
                     {

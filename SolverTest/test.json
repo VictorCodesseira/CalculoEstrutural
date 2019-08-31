@@ -16,43 +16,43 @@
 		}
 	],
 
-    "Nodes": [
-        {
-            "ID": 0,
-            "x": 0,
-            "y": 0,
-            "z": 0
-        },
-        {
-            "ID": 1,
-            "x": 1,
-            "y": 0,
-            "z": 0
-        },
-        {
-            "ID": 2,
-            "x": 2,
-            "y": 0,
-            "z": 0
-        }
-    ],
+	"Nodes": [
+		{
+			"ID": 0,
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"ID": 1,
+			"x": 1,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"ID": 2,
+			"x": 3,
+			"y": 0,
+			"z": 0
+		}
+	],
 
-    "Beams": [
-        {
-            "ID": 0,
-            "StartNode": 0,
-            "EndNode": 1,
-            "Material": "Steel",
-            "Section": 0
-        },
-        {
-            "ID": 1,
-            "StartNode": 1,
-            "EndNode": 2,
-            "Material": "Steel",
-            "Section": 0
-        }
-    ],
+	"Beams": [
+		{
+			"ID": 0,
+			"StartNode": 0,
+			"EndNode": 1,
+			"Material": "Steel",
+			"Section": 0
+		},
+		{
+			"ID": 1,
+			"StartNode": 1,
+			"EndNode": 2,
+			"Material": "Steel",
+			"Section": 0
+		}
+	],
 
 	"CurvedBeams":[
 
@@ -71,21 +71,21 @@
 	],
 
 	"Links": [
-        {
-            "Type": "Mount",
-            "Node": 0
-        },
-        {
-            "Type": "Mount",
-            "Node": 2,
-            "Direction": "y"
-        }
+		{
+			"Type": "Mount",
+			"Node": 0
+		},
+		{
+			"Type": "Mount",
+			"Node": 2,
+			"Direction": "y"
+		}
 	],
 
 	"Hinges": [
-        {
-            "Node":  1
-        }
+		{
+			"Node":  1
+		}
 	],
 
 	"ForcedDisplacements": [
