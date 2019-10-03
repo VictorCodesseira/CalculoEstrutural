@@ -6,7 +6,7 @@ namespace Solver
     class CurvedBeam : Element
     {
 
-        Node middleNode;
+        public Node middleNode;
         double L;
         double kappa;
         private double E, A, G, J, Iy, Iz;

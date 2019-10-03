@@ -84,7 +84,9 @@ namespace Solver
                     int endNodeID = (int)cbm["EndNode"];
                     string materialName = (string)cbm["Material"];
                     int sectID = (int)cbm["Section"];
-                    elements[beamID] = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                    CurvedBeam cbeam = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                    elements[beamID] = cbeam;
+                    nodes[centerNodeID] = cbeam.middleNode;
                 }
             }
             catch (NullReferenceException)

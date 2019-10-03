@@ -1,0 +1,141 @@
+{
+  "Nodes": [
+    {
+      "ID": 0,
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    {
+      "ID": 1,
+      "x": 2.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    {
+      "ID": 2,
+      "x": 4.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    {
+      "ID": 3,
+      "x": 2.0,
+      "y": 2.0,
+      "z": 0.0
+    },
+    {
+      "ID": 4,
+      "x": 4.0,
+      "y": 0.0,
+      "z": -2.0
+    }
+  ],
+  "Beams": [
+    {
+      "ID": 0,
+      "StartNode": 0,
+      "EndNode": 1,
+      "Material": "Steel",
+      "Section": 0
+    },
+    {
+      "ID": 1,
+      "StartNode": 1,
+      "EndNode": 2,
+      "Material": "Steel",
+      "Section": 0
+    },
+    {
+      "ID": 2,
+      "StartNode": 1,
+      "EndNode": 3,
+      "Material": "Steel",
+      "Section": 0
+    },
+    {
+      "ID": 3,
+      "StartNode": 2,
+      "EndNode": 4,
+      "Material": "Steel",
+      "Section": 0
+    }
+  ],
+  "Loads": [
+    {
+      "Node": 4,
+      "Forces": [
+        0.0,
+        5.0,
+        0.0
+      ],
+      "Moments": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "Node": 2,
+      "Forces": [
+        0.0,
+        -5.0,
+        30.0
+      ],
+      "Moments": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "Node": 3,
+      "Forces": [
+        0.0,
+        -20.0,
+        0.0
+      ],
+      "Moments": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "DistributedLoads": [
+    {
+      "Beam": 2,
+      "StartVector": [
+        0.0,
+        0.0,
+        -20.0
+      ],
+      "EndVector": [
+        0.0,
+        0.0,
+        -20.0
+      ]
+    }
+  ],
+  "Sections": [
+    {
+      "Width": 0.2,
+      "Height": 0.2,
+      "ID": 0,
+      "Type": "Rectangular"
+    }
+  ],
+  "Materials": [
+    {
+      "Name": "Steel",
+      "E": 200000.0,
+      "Poisson": 0.3
+    }
+  ],
+  "Links": [
+    {
+      "Type": "Mount",
+      "Node": 0
+    }
+  ]
+}

@@ -1,94 +1,81 @@
 ﻿{
-	"Materials":[
-		{
-			"Name": "Steel",
-			"E": 2E11,
-			"Poisson": 0.3
-		}
-	],
+    "Materials":[
+        {
+            "Name": "Steel",
+            "E": 2E11,
+            "Poisson": 0.3
+        }
+    ],
 
-	"Sections":[
-		{
-			"Type": "Rectangular",
-			"ID": 0,
-			"Width": 0.2,
-			"Height": 0.2
-		}
-	],
+    "Sections":[
+        {
+            "Type": "Rectangular",
+            "ID": 0,
+            "Width": 0.2,
+            "Height": 0.2
+        }
+    ],
 
-	"Nodes": [
-		{
-			"ID": 0,
-			"x": 0,
-			"y": 0,
-			"z": 0
-		},
-		{
-			"ID": 1,
-			"x": 1,
-			"y": 0,
-			"z": 0
-		},
-		{
-			"ID": 2,
-			"x": 3,
-			"y": 0,
-			"z": 0
-		}
-	],
+    "Nodes": [
+        {
+            "ID": 0,
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        {
+            "ID": 1,
+            "x": 1,
+            "y": 1,
+            "z": 0
+        },
+        {
+            "ID": 2,
+            "x": 1,
+            "y": 0,
+            "z": 0
+        }
+    ],
 
-	"Beams": [
-		{
-			"ID": 0,
-			"StartNode": 0,
-			"EndNode": 1,
-			"Material": "Steel",
-			"Section": 0
-		},
-		{
-			"ID": 1,
-			"StartNode": 1,
-			"EndNode": 2,
-			"Material": "Steel",
-			"Section": 0
-		}
-	],
+    "Beams": [
 
-	"CurvedBeams":[
+    ],
 
-	],
+    "CurvedBeams": [
+        {
+            "ID": 0,
+            "StartNode": 0,
+            "EndNode": 1,
+            "CenterNode": 2,
+            "Material": "Steel",
+            "Section": 0
+        }
+    ],
 
-	"Loads":[
-		{
-			"Node": 1,
-			"Forces":  [0, -10000, 0],
-			"Moments": [0, 0, 0]
-		}
-	],
+    "Loads":[
+        {
+            "Node": 1,
+            "Forces": [ 0, -10000, 0 ],
+            "Moments":  [0, 0, 0]
+        }
+    ],
 
-	"DistributedLoads":[
+    "DistributedLoads":[
 
-	],
+    ],
 
-	"Links": [
-		{
-			"Type": "Mount",
-			"Node": 0
-		},
-		{
-			"Type": "Mount",
-			"Node": 2,
-			"Direction": "y"
-		}
-	],
+    "Links": [
+        {
+            "Type": "Mount",
+            "Node": 0
+        }
+    ],
 
-	"Hinges": [
-		{
-			"Node":  1
-		}
-	],
+    "Hinges": [
 
-	"ForcedDisplacements": [
+    ],
 
-	]
+    "ForcedDisplacements": [
+
+    ]
 }

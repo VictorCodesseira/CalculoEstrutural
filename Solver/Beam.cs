@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra.Double;
+using System;
 
 namespace Solver
 {
@@ -96,6 +97,10 @@ namespace Solver
                                (-(1.0 / 30.0) * sv[2] - (1.0 / 20.0) * ev[2])*L*L,
                                (-(1.0 / 30.0) * sv[1] - (1.0 / 20.0) * ev[1])*L*L };
             EquivalentNodalForcesVector = DenseVector.OfArray(loads);
+
+            startNode.EquivalentForces.Add(EquivalentNodalForcesVector.SubVector(0, 6), startNode.EquivalentForces);
+            endNode.EquivalentForces.Add(EquivalentNodalForcesVector.SubVector(6, 6), endNode.EquivalentForces);
+
         }
 
         private void CalculateElasticLines()
@@ -137,8 +142,8 @@ namespace Solver
             }
             ElasticLineZ = new double[] { w0,
                                           phi0,
-                                          -(-2 * L5 * a0 - 5 * L4 * b0 - 360 * E * I * w0 + 360 * E * I * wL + 240 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L2),
-                                          (-3 * L5 * a0 - 10 * L4 * b0 - 240 * E * I * w0 + 240 * E * I * wL + 120 * E * I * L * phi0 + 120 * E * I * L * phiL) / (120 * E * I * L3),
+                                          (2 * L5 * a0 + 5 * L4 * b0 - 360 * E * I * w0 + 360 * E * I * wL - 240 * E * I * L * phi0 - 120 * E * I * L * phiL) / (120 * E * I * L2),
+                                          -(3 * L5 * a0 -+ 10 * L4 * b0 - 240 * E * I * w0 + 240 * E * I * wL - 120 * E * I * L * phi0 - 120 * E * I * L * phiL) / (120 * E * I * L3),
                                           b0 / (24 * E * I),
                                           a0 / (120 * E * I) };
         }
