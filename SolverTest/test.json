@@ -1,45 +1,45 @@
 ﻿{
-	"Materials":[
-		{
-			"Name": "Steel",
-			"E": 2E11,
-			"Poisson": 0.3
-		}
-	],
+    "Materials":[
+        {
+            "Name": "Steel",
+            "E": 2E11,
+            "Poisson": 0.3
+        }
+    ],
 
-	"Sections":[
-		{
-			"Type": "Rectangular",
-			"ID": 0,
-			"Width": 0.2,
-			"Height": 0.2
-		}
-	],
+    "Sections":[
+        {
+            "Type": "Rectangular",
+            "ID": 0,
+            "Width": 0.2,
+            "Height": 0.2
+        }
+    ],
 
-	"Nodes":[
-		{
-			"ID": 0,
-			"x": 0,
-			"y": 0,
-			"z": 0
-		},
-		{
-			"ID": 1,
-			"x": 1,
-			"y": 1,
-			"z": 0
-		},
-		{
-			"ID": 2,
-			"x": 1,
-			"y": 0,
-			"z": 0
-		}
-	],
+    "Nodes": [
+        {
+            "ID": 0,
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        {
+            "ID": 1,
+            "x": 1,
+            "y": 1,
+            "z": 0
+        },
+        {
+            "ID": 2,
+            "x": 1,
+            "y": 0,
+            "z": 0
+        }
+    ],
 
-	"Beams":[
+    "Beams": [
 
-	],
+    ],
 
 	"CurvedBeams":[
 		{
@@ -52,30 +52,30 @@
 		}
 	],
 
-	"Loads":[
-		{
-			"Node": 1,
-			"Forces":  [0, 10000, 10000],
-			"Moments": [0, 0, 0]
-		}
-	],
+    "Loads":[
+        {
+            "Node": 1,
+            "Forces": [ 0, -10000, 0 ],
+            "Moments":  [0, 0, 0]
+        }
+    ],
 
 	"DistributedLoads":[
 
-	],
+    ],
 
-	"Links": [
-		{
-			"Type": "Mount",
-			"Node": 0
-		}
-	],
+    "Links": [
+        {
+            "Type": "Mount",
+            "Node": 0
+        }
+    ],
 
-	"Hinges": [
+    "Hinges": [
 
-	],
+    ],
 
 	"ForcedDisplacements": [
 
-	]
+    ]
 }

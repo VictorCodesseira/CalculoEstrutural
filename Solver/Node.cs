@@ -30,13 +30,16 @@ namespace Solver
         [JsonIgnore]
         public DenseVector EndForces;
 
+        [JsonIgnore]
+        public DenseVector EquivalentForces;
+
         public DenseVector NodalDisplacements; // Displacements of the node, in the global cartesian system
 
         public DenseVector NodalReactions // Reactions of the node, in the global cartesian system
         {
             get
             {
-               return EndForces - this.load.FVector;
+               return EndForces - this.load.FVector - this.EquivalentForces;
             }
         }
         public Node(double x, double y, double z, int ID)
@@ -49,6 +52,7 @@ namespace Solver
             this.link = new Link();
             this.NodalDisplacements = new DenseVector(6);
             this.EndForces = new DenseVector(6);
+            this.EquivalentForces = new DenseVector(6);
         }
 
         public void addLoad(Load ld)

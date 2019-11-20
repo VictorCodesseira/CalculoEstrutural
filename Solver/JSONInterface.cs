@@ -84,7 +84,9 @@ namespace Solver
                     int endNodeID = (int)cbm["EndNode"];
                     string materialName = (string)cbm["Material"];
                     int sectID = (int)cbm["Section"];
-                    elements[beamID] = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                    CurvedBeam cbeam = new CurvedBeam(nodes[startNodeID], nodes[endNodeID], nodes[centerNodeID], materials[materialName], sections[sectID], beamID);
+                    elements[beamID] = cbeam;
+                    nodes[centerNodeID] = cbeam.middleNode;
                 }
             }
             catch (NullReferenceException)
@@ -113,8 +115,8 @@ namespace Solver
                 foreach (dynamic dld in json["DistributedLoads"]) // Add distributed loads to beams
                 {
                     int beamID = (int)dld["Beam"];
-                    double[] startVector = dld["Start Vector"].ToObject<double[]>();
-                    double[] endVector = dld["End Vector"].ToObject<double[]>();
+                    double[] startVector = dld["StartVector"].ToObject<double[]>();
+                    double[] endVector = dld["EndVector"].ToObject<double[]>();
                     (elements[beamID] as Beam).addLoad(new DistributedLoad(startVector, endVector));
                 }
             }
@@ -162,9 +164,23 @@ namespace Solver
             {
                 foreach (dynamic hin in json["Hinges"]) // Add hinges to nodes
                 {
-                    int beam = (int)hin["Beam"];
-                    int node = (int)hin["Node"];
-                    ((Beam)elements[beam]).addHinge(node);
+                    int nodeID = (int)hin["Node"];
+                    Node releaseStartNode = nodes[nodeID];
+                    Node releaseEndNode = new Node(releaseStartNode.Position.x, releaseStartNode.Position.y, releaseStartNode.Position.z, nodes.Count);
+                    nodes[nodes.Count] = releaseEndNode;
+                    foreach(Element el in elements.Values)
+                    {
+                        if (el.startNode.ID == nodeID)
+                        {
+                            el.startNode = releaseEndNode;
+                            break;
+                        } else if (el.endNode.ID == nodeID)
+                        {
+                            el.endNode = releaseEndNode;
+                            break;
+                        }
+                    }
+                    elements[elements.Count] = new Release(releaseStartNode, releaseEndNode, elements.Count);
                 }
             }
             catch (NullReferenceException)
